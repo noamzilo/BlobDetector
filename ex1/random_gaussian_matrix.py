@@ -36,9 +36,21 @@ class Ex1(object):
         cv2.imshow("grayscale", self.__grayscale_image)
         cv2.waitKey(0)
 
+    def detect_edges(self, thres1, thres2):
+        # if pixel's gradient is higher than the high threshold, it is an edge.
+        # if a pixel's gradient is lower than the low threshold, it is not an edge.
+        # if a pixel's gradient is between the thresholds, then it is an edge iff it is connected to an edge pixel.
+        edge_image = cv2.Canny(self.__grayscale_image, thres1, thres2)
+        cv2.imshow(f"edges, {thres1}, {thres2}", edge_image)
+        cv2.waitKey(0)
+
+
 if __name__ == "__main__":
     ex1 = Ex1(mean=10, std=5, size=(100, 100))
     # ex1.generate_random_gaussian_matrix()
     # ex1.draw_histogram()
     ex1.read_my_image()
+    ex1.detect_edges(thres1=500, thres2=250)
+    ex1.detect_edges(thres1=500, thres2=300)
+    ex1.detect_edges(thres1=1000, thres2=250)
 
