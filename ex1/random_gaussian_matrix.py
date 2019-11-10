@@ -64,7 +64,7 @@ if __name__ == "__main__":
     ex1.generate_random_gaussian_matrix()
     ex1.draw_histogram()
     ex1.read_my_image()
-    ex1.detect_edges(thres1=500, thres2=250)
+    ex1.detect_edges(thres1=300, thres2=250)
     ex1.detect_edges(thres1=500, thres2=300)
     ex1.detect_edges(thres1=1000, thres2=250)
     ex1.detect_harris(block_size=4, ksize=3, k=0.04, corner_threshold=0.01)  # interesting points, not many
