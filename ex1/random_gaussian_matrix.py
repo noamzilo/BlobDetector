@@ -36,7 +36,7 @@ class Ex1(object):
         cv2.imshow("grayscale", self.__grayscale_image)
         cv2.waitKey(0)
 
-    def detect_edges(self, thres1, thres2):
+    def detect_edges(self, thres1, thres2):  # 1d
         # if pixel's gradient is higher than the high threshold, it is an edge.
         # if a pixel's gradient is lower than the low threshold, it is not an edge.
         # if a pixel's gradient is between the thresholds, then it is an edge iff it is connected to an edge pixel.
@@ -44,13 +44,29 @@ class Ex1(object):
         cv2.imshow(f"edges, {thres1}, {thres2}", edge_image)
         cv2.waitKey(0)
 
+    def detect_harris(self, block_size, ksize, k, corner_threshold):  # 1e
+        # blockSize: neighbourhood size for corner detection
+        # kSize: - Aperture parameter of Sobel derivative used.
+        # k - free parameter.
+        harris_corners = cv2.cornerHarris(self.__grayscale_image, blockSize=block_size, ksize=ksize, k=k)
+        grayscale_image_tags = np.zeros((self.__grayscale_image.shape[0], self.__grayscale_image.shape[1], 3),
+                                          dtype=self.__grayscale_image.dtype)
+        grayscale_image_tags = cv2.dilate(grayscale_image_tags, np.ones((5, 5)))
+        grayscale_image_tags[:, :, 0] = grayscale_image_tags[:, :, 1] = grayscale_image_tags[:, :, 2] = \
+            self.__grayscale_image.copy()
+        grayscale_image_tags[harris_corners > corner_threshold] = [0, 0, 255]
+        cv2.imshow("grayscale with corners", grayscale_image_tags)
+        cv2.waitKey(0)
+
 
 if __name__ == "__main__":
     ex1 = Ex1(mean=10, std=5, size=(100, 100))
-    # ex1.generate_random_gaussian_matrix()
-    # ex1.draw_histogram()
+    ex1.generate_random_gaussian_matrix()
+    ex1.draw_histogram()
     ex1.read_my_image()
     ex1.detect_edges(thres1=500, thres2=250)
     ex1.detect_edges(thres1=500, thres2=300)
     ex1.detect_edges(thres1=1000, thres2=250)
+    ex1.detect_harris(block_size=4, ksize=3, k=0.04, corner_threshold=0.01)  # interesting points, not many
+    ex1.detect_harris(block_size=8, ksize=5, k=0.1, corner_threshold=0.02)  # too many points
 
