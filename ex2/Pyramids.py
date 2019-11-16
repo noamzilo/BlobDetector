@@ -7,9 +7,10 @@ from scipy.signal import convolve2d
 
 
 class Pyramids(object):
-    def __init__(self, absolute_path_to_image, num_pyramids, initial_scale, scale_multiply_per_level):
-        self._absolute_path_to_image = absolute_path_to_image
-        assert os.path.isfile(self._absolute_path_to_image)
+    def __init__(self, grayscale_image, num_pyramids, initial_scale, scale_multiply_per_level):
+        self._grayscale_image = grayscale_image
+        self._h, self._w = self._grayscale_image.shape
+
         self._num_pyramids = num_pyramids
         assert self._num_pyramids > 0
         self._initial_scale = initial_scale
@@ -22,20 +23,22 @@ class Pyramids(object):
         self._create_pyramids()
 
     def get_pyramids(self):
-        return self._pyramids.copy()
+        return self._pyramids, self._scales_array.copy(), [filt.shape[0] for filt in self._filters_array]
 
     def _create_filters(self):
         self._filters_array = []
+        self._scales_array = []
         current_scale = self._initial_scale
         for i in range(self._num_pyramids):
             filter_size = self._calculate_filter_size(current_scale)
             filt = log_filt(ksize=filter_size, sig=current_scale)
             # filt *= self._normalize_filter(filt, sigma=current_scale)
             self._filters_array.append(filt)
+            self._scales_array.append(current_scale)
             current_scale *= self._scale_multiply_per_level
 
-        for filt in self._filters_array:
-            plt.imshow(filt, interpolation='nearest')
+        # for filt in self._filters_array:
+        #     plt.imshow(filt, interpolation='nearest')
 
     @staticmethod
     def _show_matrix_as_grayscale(title, mat):
@@ -59,16 +62,10 @@ class Pyramids(object):
         return 2 * np.ceil(3 * sigma) + 1
 
     def _create_pyramids(self):
-        self._read_image_from_disk()
         self._pyramids = np.zeros((self._h, self._w, self._num_pyramids), dtype=float)
         for i, filt in enumerate(self._filters_array):
             self._pyramids[:, :, i] = convolve2d(in1=self._grayscale_image, in2=filt, mode='same')
 
-        for i in range(self._num_pyramids):
-            self._show_matrix_as_grayscale(title=f"pyramid {i}", mat=self._pyramids[:, :, i])
+        # for i in range(self._num_pyramids):
+        #     self._show_matrix_as_grayscale(title=f"pyramid {i}", mat=self._pyramids[:, :, i])
 
-    def _read_image_from_disk(self):
-        self._grayscale_image = cv2.imread(self._absolute_path_to_image, 0)
-        self._h, self._w = self._grayscale_image.shape
-        cv2.imshow("grayscale", self._grayscale_image)
-        cv2.waitKey(0)
