@@ -17,7 +17,7 @@ class Ex1(object):
 
     def generate_random_gaussian_matrix(self):  # 1a
         self.__mat = np.random.normal(loc=self.__mean, scale=self.__std, size=self.__size)
-        grayscale_mat = (self.__mat - np.min(self.__mat)) / np.max(self.__mat)
+        grayscale_mat = (self.__mat - np.min(self.__mat)) / (np.max(self.__mat) - np.min(self.__mat))
         cv2.imshow("random gaussian matrix", grayscale_mat)
         cv2.waitKey(0)
 
