@@ -1,7 +1,6 @@
 import os
 import numpy as np
 from ex2.Pyramids import Pyramids
-from ex2.LocalMaximaFinder import LocalMaximaFinder
 import scipy.ndimage.filters as filters
 import cv2
 
@@ -33,22 +32,24 @@ class LogBlobDetector(object):
         self._scale_multiply_per_level = 2 ** 0.25
         self._max_min_threshold = 15
 
-    def find_local_maxima(self):
-        color_image = self._color_image
-
-        pyramids, scales, filt_sizes = self._pyramids.get_pyramids()
-
-        suppression_diameter = np.median(scales) # chose something that would presumable be adaptive and won't need tuning
+    def _find_true_maxima(self):
+        pyramids, self._scales, self._filt_sizes = self._pyramids.get_pyramids()
+        suppression_diameter = np.median(self._scales) # chose something that would presumable be adaptive and won't need tuning
 
         data_max = filters.maximum_filter(pyramids, suppression_diameter)
         maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
 
-        true_max_locations = np.where(maxima_mask)
+        self._true_max_locations = np.where(maxima_mask)
 
+    def detect_blobs(self):
+        self._find_true_maxima()
+        true_max_locations = self._true_max_locations
+
+        # draw blobs with scales on color image
         for maxima_locations_x, maximum_location_y, mask_ind in zip(true_max_locations[1], true_max_locations[0], true_max_locations[2]):
-            cv2.circle(color_image, (maxima_locations_x, maximum_location_y), int(np.ceil(scales[mask_ind])), (0, 255, 0), 1)
+            cv2.circle(self._color_image, (maxima_locations_x, maximum_location_y), int(np.ceil(self._scales[mask_ind])), (0, 255, 0), 1)
 
-        cv2.imshow(self._absolute_path_to_image + " local_maxima on original", color_image)
+        cv2.imshow(self._absolute_path_to_image + " local_maxima on original", self._color_image)
 
 
 if __name__ == "__main__":
@@ -63,17 +64,17 @@ if __name__ == "__main__":
         # running takes a while, please be patient.
 
         blob_detector = LogBlobDetector(butterfly)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
         blob_detector = LogBlobDetector(einstein)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
         blob_detector = LogBlobDetector(fishes)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
         blob_detector = LogBlobDetector(sunflowers)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
         blob_detector = LogBlobDetector(matryoshkas)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
         blob_detector = LogBlobDetector(cakes)
-        blob_detector.find_local_maxima()
+        blob_detector.detect_blobs()
 
     main()
     cv2.waitKey(0)
