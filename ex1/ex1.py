@@ -19,7 +19,6 @@ class Ex1(object):
         self.__mat = np.random.normal(loc=self.__mean, scale=self.__std, size=self.__size)
         grayscale_mat = (self.__mat - np.min(self.__mat)) / (np.max(self.__mat) - np.min(self.__mat))
         cv2.imshow("random gaussian matrix", grayscale_mat)
-        cv2.waitKey(0)
 
     def draw_histogram(self):  # 1b
         hist, bins = np.histogram(self.__mat, bins=256)
@@ -32,9 +31,7 @@ class Ex1(object):
         self.__color_image = cv2.imread(self.__abs_path_to_image)
         self.__grayscale_image = cv2.imread(self.__abs_path_to_image, 0)
         cv2.imshow("color", self.__color_image)
-        cv2.waitKey(0)
         cv2.imshow("grayscale", self.__grayscale_image)
-        cv2.waitKey(0)
 
     def detect_edges(self, thres1, thres2):  # 1d
         # if pixel's gradient is higher than the high threshold, it is an edge.
@@ -42,7 +39,6 @@ class Ex1(object):
         # if a pixel's gradient is between the thresholds, then it is an edge iff it is connected to an edge pixel.
         edge_image = cv2.Canny(self.__grayscale_image, thres1, thres2)
         cv2.imshow(f"edges, {thres1}, {thres2}", edge_image)
-        cv2.waitKey(0)
 
     def detect_harris(self, block_size, ksize, k, corner_threshold):  # 1e
         # blockSize: neighbourhood size for corner detection
@@ -56,7 +52,6 @@ class Ex1(object):
             self.__grayscale_image.copy()
         grayscale_image_tags[harris_corners > corner_threshold] = [0, 0, 255]
         cv2.imshow("grayscale with corners", grayscale_image_tags)
-        cv2.waitKey(0)
 
 
 if __name__ == "__main__":
