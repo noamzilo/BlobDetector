@@ -1,6 +1,7 @@
 from LoG_filter import log_filt
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Pyramids(object):
@@ -26,13 +27,16 @@ class Pyramids(object):
             self._filters_array.append(filt)
             current_scale *= self._scale_multiply_per_level
 
+        # for filt in self._filters_array:
+        #     plt.imshow(filt, interpolation='nearest')
+
     @staticmethod
     def _calculate_filter_size(sigma):
         return 2 * np.ceil(3 * sigma) + 1
 
-
     def _create_pyramids(self):
         self._read_image_from_disk()
+
 
     def _read_image_from_disk(self):
         pass

@@ -24,3 +24,5 @@ if __name__ == "__main__":
     def main():
         path_to_image = r"../images/butterfly.jpg"
         blob_detector = BlobDetector(path_to_image)
+
+    main()
