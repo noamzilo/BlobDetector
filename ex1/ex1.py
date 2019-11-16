@@ -63,6 +63,7 @@ if __name__ == "__main__":
     ex1.detect_edges(thres1=500, thres2=300)
     ex1.detect_edges(thres1=1000, thres2=250)
     ex1.detect_harris(block_size=4, ksize=3, k=0.04, corner_threshold=0.01)  # interesting points, not many
-    ex1.detect_harris(block_size=8, ksize=5, k=0.1, corner_threshold=0.02)  # too many points
+    ex1.detect_harris(block_size=4, ksize=5, k=0.04, corner_threshold=0.015)  # too many points, can be dealt with by larger threshold
+
     cv2.waitKey(0)
 
