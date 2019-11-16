@@ -27,15 +27,10 @@ class LogBlobDetector(object):
 
     def _set_constants(self):
         # These should come from a config file, but I didn't know if external libraries such as pyYaml are allowed
-        self._num_pyramids = 10
+        self._num_pyramids = 15
         self._initial_scale_pixels = 2
         self._scale_multiply_per_level = 2 ** 0.25
-        self._max_min_threshold = 0
-
-    @staticmethod
-    def _non_max_suppression(centers_x, centers_y, radiuses):
-        assert len(centers_x) == len(radiuses)
-        return centers_X
+        self._max_min_threshold = 20
 
     def find_local_maxima(self):
         color_image = np.zeros((self._h, self._w, 3), dtype=self._grayscale_image.dtype)
@@ -46,37 +41,21 @@ class LogBlobDetector(object):
 
         pyramids, scales, filt_sizes = self._pyramids.get_pyramids()
 
-        # first_filter_size = filt_sizes[0]
-        # last_filter_size = filt_sizes[-1]
-        # avg_filter_size = np.median(filt_sizes)
-        # arbitraty_size = filt_sizes[-3]
-        #
-        # data_max = filters.maximum_filter(pyramids, arbitraty_size)
-        # maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
+        suppression_diameter = np.median(scales) # chose something that would presumable be adaptive and won't need tuning
 
-        maxima = np.max(pyramids)
-        maxima_inds = np.where(maxima == pyramids)
-        filt_sizes = np.array(filt_sizes)
-        maxima_scales = filt_sizes[np.array(maxima_inds[2])]
-        true_max = self._non_max_suppression(centers_x = maxima[maxima_inds][1], centers_y = maxima[maxima_inds][0], radiuses=maxima_scales)
+        data_max = filters.maximum_filter(pyramids, suppression_diameter)
+        maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
+
+
 
         true_max_locations = np.where(maxima_mask)
 
         for maxima_locations_x, maximum_location_y, mask_ind in zip(true_max_locations[1], true_max_locations[0], true_max_locations[2]):
-            cv2.circle(color_image, (maxima_locations_x, maximum_location_y), filt_sizes[mask_ind], (0, 255, 0), 1)
+            cv2.circle(color_image, (maxima_locations_x, maximum_location_y), int(np.ceil(scales[mask_ind])), (0, 255, 0), 1)
 
         cv2.imshow("local_maxima on original", color_image)
 
         hi=5
-
-
-
-
-
-
-        hi=5
-
-
 
 
 if __name__ == "__main__":
