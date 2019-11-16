@@ -21,8 +21,9 @@ class LogBlobDetector(object):
 
     def _read_image_from_disk(self):
         self._grayscale_image = cv2.imread(self._absolute_path_to_image, 0)
+        self._color_image = cv2.imread(self._absolute_path_to_image)
         self._h, self._w = self._grayscale_image.shape
-        cv2.imshow("grayscale", self._grayscale_image)
+        cv2.imshow(self._absolute_path_to_image + " grayscale", self._grayscale_image)
 
 
     def _set_constants(self):
@@ -30,14 +31,10 @@ class LogBlobDetector(object):
         self._num_pyramids = 15
         self._initial_scale_pixels = 2
         self._scale_multiply_per_level = 2 ** 0.25
-        self._max_min_threshold = 20
+        self._max_min_threshold = 15
 
     def find_local_maxima(self):
-        color_image = np.zeros((self._h, self._w, 3), dtype=self._grayscale_image.dtype)
-        color_image[:, :, 0] = self._grayscale_image
-        color_image[:, :, 1] = self._grayscale_image
-        color_image[:, :, 2] = self._grayscale_image
-        cv2.imshow("color from grayscale", color_image)
+        color_image = self._color_image
 
         pyramids, scales, filt_sizes = self._pyramids.get_pyramids()
 
@@ -46,16 +43,12 @@ class LogBlobDetector(object):
         data_max = filters.maximum_filter(pyramids, suppression_diameter)
         maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
 
-
-
         true_max_locations = np.where(maxima_mask)
 
         for maxima_locations_x, maximum_location_y, mask_ind in zip(true_max_locations[1], true_max_locations[0], true_max_locations[2]):
             cv2.circle(color_image, (maxima_locations_x, maximum_location_y), int(np.ceil(scales[mask_ind])), (0, 255, 0), 1)
 
-        cv2.imshow("local_maxima on original", color_image)
-
-        hi=5
+        cv2.imshow(self._absolute_path_to_image + " local_maxima on original", color_image)
 
 
 if __name__ == "__main__":
@@ -64,10 +57,23 @@ if __name__ == "__main__":
         einstein = r"../images/einstein.jpg"
         fishes = r"../images/fishes.jpg"
         sunflowers = r"../images/sunflowers.jpg"
+        matryoshkas = r"../images/matryoshkas.jpg"
+        cakes = r"../images/cakes.jpg"
+
+        # running takes a while, please be patient.
+
         blob_detector = LogBlobDetector(butterfly)
-        # blob_detector = LogBlobDetector(einstein)
-        # blob_detector = LogBlobDetector(fishes)
-        # blob_detector = LogBlobDetector(sunflowers)
+        blob_detector.find_local_maxima()
+        blob_detector = LogBlobDetector(einstein)
+        blob_detector.find_local_maxima()
+        blob_detector = LogBlobDetector(fishes)
+        blob_detector.find_local_maxima()
+        blob_detector = LogBlobDetector(sunflowers)
+        blob_detector.find_local_maxima()
+        blob_detector = LogBlobDetector(matryoshkas)
+        blob_detector.find_local_maxima()
+        blob_detector = LogBlobDetector(cakes)
         blob_detector.find_local_maxima()
 
     main()
+    cv2.waitKey(0)
