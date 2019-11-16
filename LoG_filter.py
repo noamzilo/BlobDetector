@@ -23,7 +23,7 @@ def log_filt(ksize, sig):
     
     sumh = np.sum(h)
     if sumh != 0:
-       h = h / sumh
+        h = h / sumh
        
     # now calculate Laplacian
     h1 = h*(X*X + Y*Y - 2*std2)/(std2**2)

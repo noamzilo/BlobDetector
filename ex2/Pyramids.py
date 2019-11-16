@@ -21,10 +21,15 @@ class Pyramids(object):
         self._filters_array = []
         current_scale = self._initial_scale
         for i in range(self._num_pyramids):
-            filter_size = 2 * np.ceil(3 * current_scale) + 1
+            filter_size = self._calculate_filter_size(current_scale)
             filt = log_filt(ksize=filter_size, sig=current_scale)
             self._filters_array.append(filt)
             current_scale *= self._scale_multiply_per_level
+
+    @staticmethod
+    def _calculate_filter_size(sigma):
+        return 2 * np.ceil(3 * sigma) + 1
+
 
     def _create_pyramids(self):
         self._read_image_from_disk()
