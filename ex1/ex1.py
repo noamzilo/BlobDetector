@@ -38,7 +38,7 @@ class Ex1(object):
         # if a pixel's gradient is lower than the low threshold, it is not an edge.
         # if a pixel's gradient is between the thresholds, then it is an edge iff it is connected to an edge pixel.
         edge_image = cv2.Canny(self.__grayscale_image, thres1, thres2)
-        cv2.imshow(f"edges, {thres1}, {thres2}", edge_image)
+        cv2.imshow(f"edges thres1 = {thres1}, thres2 = {thres2}", edge_image)
 
     def detect_harris(self, block_size, ksize, k, corner_threshold):  # 1e
         # blockSize: neighbourhood size for corner detection
@@ -51,7 +51,7 @@ class Ex1(object):
         grayscale_image_tags[:, :, 0] = grayscale_image_tags[:, :, 1] = grayscale_image_tags[:, :, 2] = \
             self.__grayscale_image.copy()
         grayscale_image_tags[harris_corners > corner_threshold] = [0, 0, 255]
-        cv2.imshow("grayscale with corners", grayscale_image_tags)
+        cv2.imshow(f"grayscale with corners block_size = {block_size}, ksize={ksize}, k={k}, corner_threshold={corner_threshold}", grayscale_image_tags)
 
 
 if __name__ == "__main__":
@@ -64,4 +64,5 @@ if __name__ == "__main__":
     ex1.detect_edges(thres1=1000, thres2=250)
     ex1.detect_harris(block_size=4, ksize=3, k=0.04, corner_threshold=0.01)  # interesting points, not many
     ex1.detect_harris(block_size=8, ksize=5, k=0.1, corner_threshold=0.02)  # too many points
+    cv2.waitKey(0)
 
