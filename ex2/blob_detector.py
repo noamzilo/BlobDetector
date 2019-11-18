@@ -38,16 +38,23 @@ class LogBlobDetector(object):
 
         data_max = filters.maximum_filter(pyramids, suppression_diameter)
         maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
+        data_min = filters.maximum_filter(pyramids, suppression_diameter)
+        minima_mask = np.logical_and((pyramids == data_min), data_min < -self._max_min_threshold)
 
         self._true_max_locations = np.where(maxima_mask)
+        self._true_min_locations = np.where(minima_mask)
 
     def detect_blobs(self):
         self._find_true_maxima()
         true_max_locations = self._true_max_locations
+        true_min_locations = self._true_min_locations
 
         # draw blobs with scales on color image
         for maxima_locations_x, maximum_location_y, mask_ind in zip(true_max_locations[1], true_max_locations[0], true_max_locations[2]):
             cv2.circle(self._color_image, (maxima_locations_x, maximum_location_y), int(np.ceil(self._scales[mask_ind])), (0, 255, 0), 1)
+
+        for minima_locations_x, minimum_location_y, mask_ind in zip(true_min_locations[1], true_min_locations[0], true_min_locations[2]):
+            cv2.circle(self._color_image, (minima_locations_x, minimum_location_y), int(np.ceil(self._scales[mask_ind])), (0, 0, 255), 1)
 
         cv2.imshow(self._absolute_path_to_image + " local_maxima on original", self._color_image)
 
