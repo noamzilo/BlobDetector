@@ -38,7 +38,7 @@ class LogBlobDetector(object):
 
         data_max = filters.maximum_filter(pyramids, suppression_diameter)
         maxima_mask = np.logical_and((pyramids == data_max), data_max > self._max_min_threshold)
-        data_min = filters.maximum_filter(pyramids, suppression_diameter)
+        data_min = filters.minimum_filter(pyramids, suppression_diameter)
         minima_mask = np.logical_and((pyramids == data_min), data_min < -self._max_min_threshold)
 
         self._true_max_locations = np.where(maxima_mask)
