@@ -13,3 +13,5 @@ e. Calculate Harris corners for 2 sets of parameters.
     2. Create Pyramids with corresponding filters. Normalize by sigma^2.
 2. Non maximum supression - Search for local maxima both in image space and in scale space.
 3. Present results over various scales.
+
+![](https://imgur.com/undefined)
