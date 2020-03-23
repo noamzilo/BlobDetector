@@ -14,4 +14,4 @@ e. Calculate Harris corners for 2 sets of parameters.
 2. Non maximum supression - Search for local maxima both in image space and in scale space.
 3. Present results over various scales.
 
-![](https://i.imgur.com/5D95iE6.jpg)
+![](blob:https://imgur.com/dafe4b78-50b4-49c7-8cab-5fef8ef634b0)
